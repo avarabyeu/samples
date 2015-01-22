@@ -24,7 +24,7 @@ ALTER TABLE title ADD FOREIGN KEY (person_id) REFERENCES person(id) ON DELETE CA
 ALTER TABLE title ADD FOREIGN KEY (promo_id) REFERENCES promo(id);
 
 -- ----------------------------
--- Records of validation
+-- Filling database with values
 -- ----------------------------
 INSERT INTO person VALUES (1, 'Vasia');
 INSERT INTO person VALUES (2, 'Petia');
