@@ -34,6 +34,6 @@ INSERT INTO promo VALUES (1, 'promo1');
 INSERT INTO promo VALUES (2, 'promo2');
 INSERT INTO promo VALUES (3, 'promo3');
 
-INSERT INTO title VALUES (1, 'title1', 'type1', 'format1', '2014-10-14 17:31:10', 1, 1);
+INSERT INTO title VALUES (1, CONCAT('title',  ROUND(RAND()*100, 0)), 'type1', 'format1', DATE_ADD(CURDATE(), INTERVAL 2 DAY), 1, 1);
 INSERT INTO title VALUES (2, 'title2', 'type2', 'format2', '2014-10-14 17:31:10', 2, 2);
 

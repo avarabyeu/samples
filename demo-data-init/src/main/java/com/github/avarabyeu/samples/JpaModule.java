@@ -16,6 +16,7 @@ import freemarker.template.Configuration;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import freemarker.template.Version;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
@@ -29,6 +30,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Random;
 
 /**
  * @author Andrey Vorobyov
@@ -68,11 +70,17 @@ public class JpaModule extends AbstractModule {
         configuration.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/"));
 
         /* this is default date-time (timestamp) format for DBUnit */
-        configuration.setDateTimeFormat("yyyy-mm-dd hh:mm:ss.000");
+        configuration.setDateTimeFormat("yyyy-MM-dd hh:mm:ss.000");
 
         try {
-            TemplateModel templateModel = new BeansWrapperBuilder(freemarkerVersion).build().getStaticModels().get(DateUtils.class.getCanonicalName());
-            configuration.setSharedVariable("dateUtils", templateModel);
+            TemplateModel dateUtilsTemplateModel = new BeansWrapperBuilder(freemarkerVersion).build().getStaticModels().get(DateUtils.class.getCanonicalName());
+            configuration.setSharedVariable("dateUtils", dateUtilsTemplateModel);
+
+            TemplateModel stringRandomTemplateModel = new BeansWrapperBuilder(freemarkerVersion).build().getStaticModels().get(RandomStringUtils.class.getCanonicalName());
+            configuration.setSharedVariable("stringRandom", stringRandomTemplateModel);
+
+            configuration.setSharedVariable("random", new Random());
+
         } catch (TemplateModelException e) {
             throw new IllegalStateException("Unable to initialize template shared variables", e);
         }

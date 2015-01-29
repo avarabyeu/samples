@@ -24,7 +24,7 @@ public class Title {
     private String format;
 
     @Column(name = "date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
     @OneToOne(fetch = FetchType.LAZY)
