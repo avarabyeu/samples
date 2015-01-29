@@ -1,12 +1,7 @@
 package com.github.avarabyeu.samples;
 
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,24 +12,16 @@ import java.util.Map;
 /**
  * @author Andrei Varabyeu
  */
-public class TemplateEngine {
+class TemplateEngine {
 
     private Configuration configuration;
 
-    public TemplateEngine() {
-        configuration = new Configuration(Configuration.VERSION_2_3_21);
-        configuration.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/"));
-        configuration.setDateTimeFormat("yyyy-mm-dd hh:mm:ss.000");
-
-        try {
-            TemplateModel templateModel = new BeansWrapperBuilder(Configuration.VERSION_2_3_21).build().getStaticModels().get(DateUtils.class.getCanonicalName());
-            configuration.setSharedVariable("dateUtils", templateModel);
-        } catch (TemplateModelException e) {
-            throw new IllegalStateException("Unable to initialize template shared variables", e);
-        }
+    public TemplateEngine(Configuration freemarkerConfig) {
+        this.configuration = freemarkerConfig;
 
     }
 
+    /* this method might be extracted into separate interface if you gonna use template merge it in tests */
     public byte[] merge(String template, Map<?, ?> properties) {
         Writer out = null;
         try {

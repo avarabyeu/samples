@@ -5,15 +5,23 @@ import com.github.avarabyeu.samples.dao.SomeSampleDao;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.Transactional;
 import com.google.inject.persist.jpa.JpaPersistModule;
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.ext.beans.BeansWrapperBuilder;
+import freemarker.template.Configuration;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
+import freemarker.template.Version;
+import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,7 +54,29 @@ public class JpaModule extends AbstractModule {
 
         bind(SomeSampleDao.class).to(JpaSampleDaoImpl.class);
 
-        bind(TemplateEngine.class).in(Scopes.SINGLETON);
+
+    }
+
+    /* actually, there is no need to push TemplateEngine into Guice context. For this example it's gonna be used only once
+     * and might be put into DatabaseInitializer
+     */
+    @Provides
+    @Singleton
+    public TemplateEngine provideTemplateEngine() {
+        Version freemarkerVersion = Configuration.VERSION_2_3_21;
+        Configuration configuration = new Configuration(freemarkerVersion);
+        configuration.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/"));
+
+        /* this is default date-time (timestamp) format for DBUnit */
+        configuration.setDateTimeFormat("yyyy-mm-dd hh:mm:ss.000");
+
+        try {
+            TemplateModel templateModel = new BeansWrapperBuilder(freemarkerVersion).build().getStaticModels().get(DateUtils.class.getCanonicalName());
+            configuration.setSharedVariable("dateUtils", templateModel);
+        } catch (TemplateModelException e) {
+            throw new IllegalStateException("Unable to initialize template shared variables", e);
+        }
+        return new TemplateEngine(configuration);
 
     }
 
