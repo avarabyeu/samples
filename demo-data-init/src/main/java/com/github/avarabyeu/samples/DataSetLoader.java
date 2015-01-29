@@ -5,13 +5,12 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.dbunit.util.fileloader.DataFileLoader;
-import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -22,19 +21,12 @@ import java.util.Properties;
 class DataSetLoader {
 
     @Inject
-    @Named("dataset.path")
-    private String resourceName;
-
-    @Inject
     @Named("dbunit.datatype.factory")
     private String dataTypeFactory;
 
-    public void importData(Connection connection) throws SQLException {
-
-        DataFileLoader loader = new FlatXmlDataFileLoader();
-        IDataSet ds = loader.load(resourceName);
+    public void importData(Connection connection, InputStream data) throws SQLException {
         try {
-            DatabaseOperation.CLEAN_INSERT.execute(wrapConnection(connection), ds);
+            DatabaseOperation.CLEAN_INSERT.execute(wrapConnection(connection), new FlatXmlDataSetBuilder().build(data));
         } catch (DatabaseUnitException e) {
             throw new IllegalArgumentException("Incorrect dataset provided", e);
         }

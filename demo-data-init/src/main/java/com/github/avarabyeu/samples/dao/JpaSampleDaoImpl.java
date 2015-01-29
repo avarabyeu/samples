@@ -1,6 +1,7 @@
 package com.github.avarabyeu.samples.dao;
 
 import com.github.avarabyeu.samples.model.Person;
+import com.github.avarabyeu.samples.model.Title;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -26,5 +27,11 @@ public class JpaSampleDaoImpl implements SomeSampleDao {
     @Transactional
     public Person findPerson(Long id) {
         return entityManagerProvider.get().find(Person.class, id);
+    }
+
+    @Override
+    @Transactional
+    public List<Title> findTitles() {
+        return entityManagerProvider.get().createQuery("from Title", Title.class).getResultList();
     }
 }

@@ -5,6 +5,7 @@ import com.github.avarabyeu.samples.dao.SomeSampleDao;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Scopes;
 import com.google.inject.name.Names;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.Transactional;
@@ -12,8 +13,11 @@ import com.google.inject.persist.jpa.JpaPersistModule;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 
+import javax.inject.Named;
 import javax.persistence.EntityManager;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -42,6 +46,8 @@ public class JpaModule extends AbstractModule {
 
         bind(SomeSampleDao.class).to(JpaSampleDaoImpl.class);
 
+        bind(TemplateEngine.class).in(Scopes.SINGLETON);
+
     }
 
 
@@ -66,17 +72,22 @@ public class JpaModule extends AbstractModule {
 
     public static class DatabaseInitializer {
         @Inject
-        public DatabaseInitializer(EntityManager entityManager, DataSetLoader datasetLoader) {
-            init(entityManager, datasetLoader);
+        public DatabaseInitializer(EntityManager entityManager,
+                                   DataSetLoader datasetLoader,
+                                   TemplateEngine templateEngine,
+                                   @Named("dataset.template.name") String datasetTemplate) {
+            byte[] dataset = templateEngine.merge(datasetTemplate, null);
+            initDatabase(entityManager, datasetLoader, new ByteArrayInputStream(dataset));
         }
 
         @Transactional
-        private void init(EntityManager entityManager, final DataSetLoader datasetLoader) {
+        private void initDatabase(EntityManager entityManager, final DataSetLoader datasetLoader, final InputStream dataset) {
+
             Session unwrap = entityManager.unwrap(Session.class);
             unwrap.doWork(new Work() {
                 @Override
                 public void execute(Connection connection) throws SQLException {
-                    datasetLoader.importData(connection);
+                    datasetLoader.importData(connection, dataset);
                 }
             });
         }

@@ -90,6 +90,11 @@ the specific language governing permissions and limitations under the License. -
             <artifactId>jsr305</artifactId>
             <version>3.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+        </dependency>
 
 
         <!-- In-memory database -->
@@ -109,6 +114,25 @@ the specific language governing permissions and limitations under the License. -
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.1.2</version>
+        </dependency>
+
+        <!-- MyBatis support -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.2.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-guice</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <!-- Template processing -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.21</version>
         </dependency>
 
 

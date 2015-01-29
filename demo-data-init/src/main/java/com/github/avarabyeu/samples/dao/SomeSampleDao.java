@@ -1,6 +1,7 @@
 package com.github.avarabyeu.samples.dao;
 
 import com.github.avarabyeu.samples.model.Person;
+import com.github.avarabyeu.samples.model.Title;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface SomeSampleDao {
     List<Person> findPersons();
 
     Person findPerson(Long id);
+
+    List<Title> findTitles();
 }
